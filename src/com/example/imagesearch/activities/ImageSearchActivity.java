@@ -1,19 +1,18 @@
 package com.example.imagesearch.activities;
 
-import com.example.imagesearch.R;
-import com.example.imagesearch.R.id;
-import com.example.imagesearch.R.layout;
-import com.example.imagesearch.R.menu;
-import com.example.imagesearch.fragments.ImageSearchFragment;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.imagesearch.R;
+import com.example.imagesearch.fragments.ImageSearchFragment;
+
 public class ImageSearchActivity extends ActionBarActivity {
 
+	private static final int UPDATE_SETTINGS = 0;
 	private ImageSearchFragment imageSearchFragment;
 
 	@Override
@@ -43,11 +42,22 @@ public class ImageSearchActivity extends ActionBarActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivityForResult(intent, UPDATE_SETTINGS);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == UPDATE_SETTINGS) {
+			if (resultCode == RESULT_OK) {
+				String query = imageSearchFragment.getSearchQuery();
+				imageSearchFragment.search(query);
+			}
+		}
+	}
+	
 	public void onClickSearch(View view) {
 		String query = imageSearchFragment.getSearchQuery();
 		imageSearchFragment.search(query);

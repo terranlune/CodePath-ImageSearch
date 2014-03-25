@@ -6,7 +6,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -94,7 +96,7 @@ public class ImageSearchFragment extends Fragment {
 		if (searchQuery == null) {
 			return;
 		}
-		
+
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("https").authority("ajax.googleapis.com");
 		builder.appendEncodedPath("ajax/services/search/images");
@@ -102,6 +104,26 @@ public class ImageSearchFragment extends Fragment {
 		builder.appendQueryParameter("q", searchQuery);
 		builder.appendQueryParameter("rsz", "8"); // Results per page
 		builder.appendQueryParameter("start", Integer.toString(page * 8));
+
+		SharedPreferences prefs = getActivity().getSharedPreferences("com.example.imagesearch", Context.MODE_PRIVATE);
+		String imgsz = prefs.getString("imgsz", "all");
+		String imgcolor = prefs.getString("imgcolor", "all");
+		String imgtype = prefs.getString("imgtype", "all");
+		String sitefilter = prefs.getString("sitefilter", "");
+		
+		if (!imgsz.equals("all")) {
+			builder.appendQueryParameter("imgsz", imgsz);
+		}
+		if (!imgcolor.equals("all")) {
+			builder.appendQueryParameter("imgcolor", imgcolor);
+		}
+		if (!imgtype.equals("all")) {
+			builder.appendQueryParameter("imgtype", imgtype);
+		}
+		if (!sitefilter.equals("")) {
+			builder.appendQueryParameter("as_sitesearch", sitefilter);
+		}
+		
 
 		Log.e("query", builder.build().toString());
 
