@@ -1,18 +1,25 @@
 package com.example.imagesearch.activities;
 
-import com.example.imagesearch.R;
-import com.example.imagesearch.R.id;
-import com.example.imagesearch.R.layout;
-import com.example.imagesearch.R.menu;
-import com.example.imagesearch.fragments.ImageSearchFragment;
+import java.util.List;
 
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class ImageSearchActivity extends ActionBarActivity {
+import com.example.imagesearch.R;
+import com.example.imagesearch.fragments.ImageSearchFragment;
+
+public class ImageSearchActivity extends FragmentActivity {
 
 	private ImageSearchFragment imageSearchFragment;
 
@@ -20,19 +27,38 @@ public class ImageSearchActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_image_search);
-		
+
 		if (savedInstanceState == null) {
 			imageSearchFragment = new ImageSearchFragment();
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.imageSearchFragmentContainer, imageSearchFragment).commit();
+			getSupportFragmentManager()
+					.beginTransaction()
+					.add(R.id.container, imageSearchFragment)
+					.commit();
 		}
+
+		handleIntent(getIntent());
 	}
-	
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleIntent(intent);
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.image_search, menu);
+
+		// Associate searchable configuration with the SearchView
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.action_search)
+				.getActionView();
+		SearchableInfo info = searchManager
+				.getSearchableInfo(getComponentName());
+		searchView.setSearchableInfo(info);
+		searchView.setIconifiedByDefault(false);
+
 		return true;
 	}
 
@@ -48,7 +74,29 @@ public class ImageSearchActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void handleIntent(Intent intent) {
+
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+			
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			
+			ImageSearchFragment isf = (ImageSearchFragment) getSupportFragmentManager().findFragmentById(R.id.container);
+			FragmentManager manager = getSupportFragmentManager();
+			Log.e("blah", "fragment manager: " + manager.toString());
+			List<Fragment> fl = manager.getFragments();
+			Log.e("blah", "fragment list: " + fl.toString());
+			for (Fragment f : fl) {
+				Log.e("blah", "Found fragment: " + f.toString());
+			}
+			isf.search(query);
+			
+//			String query = intent.getStringExtra(SearchManager.QUERY);
+//			imageSearchFragment.search(query);
+		}
+	}
+
 	public void onClickSearch(View view) {
+		// TODO: Fix occasional null pointer error here
 		String query = imageSearchFragment.getSearchQuery();
 		imageSearchFragment.search(query);
 	}

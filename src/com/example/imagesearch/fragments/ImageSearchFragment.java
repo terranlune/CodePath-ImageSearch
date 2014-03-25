@@ -45,6 +45,14 @@ public class ImageSearchFragment extends Fragment {
 	}
 
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		Log.e("blah","ImageSearchFragment onCreate " + this.toString());
+		resultsAdapter = new GimageSearchArrayAdapter(getActivity(), searchResults);
+	}
+	
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_image_search,
@@ -54,7 +62,6 @@ public class ImageSearchFragment extends Fragment {
 		btSearch = (Button) rootView.findViewById(R.id.btSearch);
 		gvResults = (GridView) rootView.findViewById(R.id.gvResults);
 		
-		resultsAdapter = new GimageSearchArrayAdapter(getActivity(), searchResults);
 		gvResults.setAdapter(resultsAdapter);
 		gvResults.setOnItemClickListener(new OnItemClickListener() {
 
@@ -82,8 +89,9 @@ public class ImageSearchFragment extends Fragment {
 
 	
 	public void search(String query) {
-		Toast.makeText(getActivity(), "searching for " + query, Toast.LENGTH_SHORT)
-				.show();
+		Log.e("blah", "Searching for " + query + " from " + this.toString());
+//		Toast.makeText(getActivity(), "searching for " + query, Toast.LENGTH_SHORT)
+//				.show();
 		searchQuery = query;
 		resultsAdapter.clear();
 		addPage(0);
