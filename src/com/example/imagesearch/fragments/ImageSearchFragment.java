@@ -16,8 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -34,8 +32,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
  */
 public class ImageSearchFragment extends Fragment {
 
-	private EditText etQuery;
-	private Button btSearch;
 	private GridView gvResults;
 	private ArrayList<GimageSearch> searchResults = new ArrayList<GimageSearch>();
 	private GimageSearchArrayAdapter resultsAdapter;
@@ -48,61 +44,64 @@ public class ImageSearchFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.e("blah","ImageSearchFragment onCreate " + this.toString());
-		resultsAdapter = new GimageSearchArrayAdapter(getActivity(), searchResults);
+		Log.e("blah", "ImageSearchFragment onCreate " + this.toString());
+		resultsAdapter = new GimageSearchArrayAdapter(getActivity(),
+				searchResults);
+
+		Bundle args = getArguments();
+		if (args != null) {
+			searchQuery = args.getString("query");
+			search(searchQuery);
+		}
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_image_search,
 				container, false);
 
-		etQuery = (EditText) rootView.findViewById(R.id.etQuery);
-		btSearch = (Button) rootView.findViewById(R.id.btSearch);
 		gvResults = (GridView) rootView.findViewById(R.id.gvResults);
-		
+
 		gvResults.setAdapter(resultsAdapter);
 		gvResults.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent intent = new Intent(getActivity(), ImageDisplayActivity.class);
+				Intent intent = new Intent(getActivity(),
+						ImageDisplayActivity.class);
 				GimageSearch item = searchResults.get(position);
 				intent.putExtra("image", item);
 				startActivity(intent);
-			}});
+			}
+		});
 		gvResults.setOnScrollListener(new EndlessScrollListener() {
 
 			@Override
 			public void onLoadMore(int page, int totalItemsCount) {
 				addPage(page);
-			}});
+			}
+		});
 
 		return rootView;
 	}
 
-	public String getSearchQuery() {
-		return etQuery.getText().toString();
-	}
-
-	
 	public void search(String query) {
 		Log.e("blah", "Searching for " + query + " from " + this.toString());
-//		Toast.makeText(getActivity(), "searching for " + query, Toast.LENGTH_SHORT)
-//				.show();
+		Toast.makeText(getActivity(), "searching for " + query,
+				Toast.LENGTH_SHORT).show();
 		searchQuery = query;
 		resultsAdapter.clear();
 		addPage(0);
 	}
-	
+
 	public void addPage(int page) {
-		
+
 		if (searchQuery == null) {
 			return;
 		}
-		
+
 		Uri.Builder builder = new Uri.Builder();
 		builder.scheme("https").authority("ajax.googleapis.com");
 		builder.appendEncodedPath("ajax/services/search/images");
@@ -122,10 +121,10 @@ public class ImageSearchFragment extends Fragment {
 				try {
 					jsonResults = response.getJSONObject("responseData")
 							.getJSONArray("results");
-					
+
 					resultsAdapter.addAll(GimageSearch
 							.fromJSONArray(jsonResults));
-					Log.e("query","added " + jsonResults.length() + " results");
+					Log.e("query", "added " + jsonResults.length() + " results");
 
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -134,4 +133,11 @@ public class ImageSearchFragment extends Fragment {
 		});
 	}
 
+	public static ImageSearchFragment newInstance(String query) {
+		ImageSearchFragment fragment = new ImageSearchFragment();
+		Bundle args = new Bundle();
+		args.putString("query", query);
+		fragment.setArguments(args);
+		return fragment;
+	}
 }
