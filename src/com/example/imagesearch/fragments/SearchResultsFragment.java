@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,21 +31,20 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ImageSearchFragment extends Fragment {
+public class SearchResultsFragment extends Fragment {
 
 	private GridView gvResults;
 	private ArrayList<GimageSearch> searchResults = new ArrayList<GimageSearch>();
 	private GimageSearchArrayAdapter resultsAdapter;
 	private String searchQuery;
 
-	public ImageSearchFragment() {
+	public SearchResultsFragment() {
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.e("blah", "ImageSearchFragment onCreate " + this.toString());
 		resultsAdapter = new GimageSearchArrayAdapter(getActivity(),
 				searchResults);
 
@@ -60,7 +58,7 @@ public class ImageSearchFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_image_search,
+		View rootView = inflater.inflate(R.layout.fragment_search_results,
 				container, false);
 
 		gvResults = (GridView) rootView.findViewById(R.id.gvResults);
@@ -90,7 +88,6 @@ public class ImageSearchFragment extends Fragment {
 	}
 
 	public void search(String query) {
-		Log.e("blah", "Searching for " + query + " from " + this.toString());
 		Toast.makeText(getActivity(), "searching for " + query,
 				Toast.LENGTH_SHORT).show();
 		searchQuery = query;
@@ -130,9 +127,6 @@ public class ImageSearchFragment extends Fragment {
 		if (!sitefilter.equals("")) {
 			builder.appendQueryParameter("as_sitesearch", sitefilter);
 		}
-		
-
-		Log.e("query", builder.build().toString());
 
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.get(builder.build().toString(), new JsonHttpResponseHandler() {
@@ -146,7 +140,6 @@ public class ImageSearchFragment extends Fragment {
 
 					resultsAdapter.addAll(GimageSearch
 							.fromJSONArray(jsonResults));
-					Log.e("query", "added " + jsonResults.length() + " results");
 
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -155,8 +148,8 @@ public class ImageSearchFragment extends Fragment {
 		});
 	}
 
-	public static ImageSearchFragment newInstance(String query) {
-		ImageSearchFragment fragment = new ImageSearchFragment();
+	public static SearchResultsFragment newInstance(String query) {
+		SearchResultsFragment fragment = new SearchResultsFragment();
 		Bundle args = new Bundle();
 		args.putString("query", query);
 		fragment.setArguments(args);

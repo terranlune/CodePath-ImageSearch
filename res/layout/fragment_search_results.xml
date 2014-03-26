@@ -6,7 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.imagesearch.fragments.ImageSearchFragment" >
+    tools:context="com.example.imagesearch.fragments.SearchResultsFragment" >
 
     <GridView
         android:id="@+id/gvResults"

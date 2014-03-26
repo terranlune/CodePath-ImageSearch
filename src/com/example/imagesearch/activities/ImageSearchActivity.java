@@ -8,13 +8,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.imagesearch.R;
-import com.example.imagesearch.fragments.ImageSearchFragment;
 import com.example.imagesearch.fragments.IntroFragment;
+import com.example.imagesearch.fragments.SearchResultsFragment;
 
 public class ImageSearchActivity extends FragmentActivity {
 	private static final int UPDATE_SETTINGS = 0;
@@ -23,8 +22,6 @@ public class ImageSearchActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-
-		Log.e("blah", "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_image_search);
 
@@ -44,7 +41,6 @@ public class ImageSearchActivity extends FragmentActivity {
 	
 	@Override
 	public void onNewIntent(Intent intent) {
-		Log.e("blah", "onNewIntent");
 		handleIntent(intent);
 	}
 
@@ -86,17 +82,13 @@ public class ImageSearchActivity extends FragmentActivity {
 	private void handleIntent(Intent intent) {
 
 		lastIntent = intent;
-		
-		Log.d("blah", "handleIntent " + intent.getAction());
 
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
-			ImageSearchFragment f = ImageSearchFragment.newInstance(query);
+			SearchResultsFragment f = SearchResultsFragment.newInstance(query);
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.container, f).commit();
 		} else {
-			String query = intent.getStringExtra(SearchManager.QUERY);
-			Log.d("blah", "query=" + query);
 			IntroFragment f = new IntroFragment();
 			getSupportFragmentManager().beginTransaction()
 					.replace(R.id.container, f).commit();
