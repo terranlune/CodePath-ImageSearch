@@ -31,11 +31,24 @@ public class ImageSearchActivity extends FragmentActivity {
 	}
 
 	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		savedInstanceState.putParcelable("lastIntent", lastIntent);
+		super.onSaveInstanceState(savedInstanceState);
+	}
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		lastIntent = savedInstanceState.getParcelable("lastIntent");
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
 		
 		if (redoSearch) {
 			handleIntent(lastIntent);
+			redoSearch = false;
 		}
 	}
 	

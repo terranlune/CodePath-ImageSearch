@@ -53,6 +53,8 @@ public class SearchResultsFragment extends Fragment {
 			searchQuery = args.getString("query");
 			search(searchQuery);
 		}
+		
+		setRetainInstance(true);
 	}
 
 	@Override
